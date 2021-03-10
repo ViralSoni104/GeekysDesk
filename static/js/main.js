@@ -14,7 +14,7 @@ function getCookie(name) {
     return cookieValue;
 }
 var csrftoken = getCookie('csrftoken');
-var site_host = location.protocol + "//" + location.hostname + ":8000";
+var site_host = location.protocol + "//" + location.hostname;
 
 function Subscribe() {
     $.ajax({
