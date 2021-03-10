@@ -79,7 +79,7 @@ def get_count_in_KMB(count_to_convert):
 
 @register.simple_tag
 def get_menu_categories():
-    menu_categories = Category.objects.filter(status='True',show_to_main_menu='Yes').exclude(parent__slog='programming-langauages')[:4]
+    menu_categories = Category.objects.filter(status='True',show_to_main_menu='Yes').exclude(parent__slug='programming-langauages')[:4]
     programming_langauages = Category.objects.filter(status='True',show_to_main_menu='Yes',parent__title='Programming Langauages').order_by('id')[:4]
     main_menu_categories = {
         'menu_categories' : menu_categories,
