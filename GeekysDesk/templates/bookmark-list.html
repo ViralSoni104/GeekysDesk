@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_tags %}
+
+{% block meta_tags %}{% endblock %}
+
+{% block title_tag %}Bookmark List - {% get_site_setting as site %}{{ site.Basic_Settings.Site_Name }}{% endblock %}
+
+{% block custom_css_and_links %}
+<link rel="canonical" href="http://127.0.0.1:8000/bookmark-list/">
+{% endblock %}
+
+{% block breadcrum %}{% endblock %}
+
+{% block content %}
+<!-- Latest post section-->
+<section class="category-page">
+    
+    <div class="container">
+        <div class="row">
+            <div class="area-heading cust_marging">
+                <h3>Bookmarked Post</h3>
+            </div>
+        </div>
+        <div class="row">
+            {% for rs in bookmark_posts %}
+            <div class="col-md-6 col-lg-4 latest_posts col-12">
+                <div class="single-category">
+                    <div class="thumb">
+                        <img class="img-fluid" src="/media/{{ rs.feature_image }}" alt="{{rs.title}}">
+                    </div>
+                    <div class="short_details">
+                        <div class="meta-top d-flex">
+                            <a href="{{ rs.category.get_absolute_url }}">{{rs.category}}</a>/
+                            <a>{{ rs.create_at }}</a>
+                        </div>
+                        <a class="d-block" href="{% url 'single-blog' rs.category.slug rs.slug %}">
+                            <h4>{{ rs.title }}</h4>
+                        </a>
+                        <div class="d-flex mt-3">
+                            <p>{{rs.short_description|truncatechars:"80"}}</p>
+                        </div>
+                        <div class="meta-bottom d-flex">
+                            <a onclick="save_post('{{rs.id}}','.bookmark_{{rs.id}}','reload_page')" class="btn btn-dark text-white text-capitalize" style="font-size: 0.8rem;">Remove<i class="ml-2 fa fa-times"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="row container d-flex justify-content-center">
+            <nav class="blog-pagination justify-content-center d-flex">
+                <ul class="pagination">
+                    {% if bookmark_posts.has_other_pages %}
+                        {% if bookmark_posts.has_previous %}
+                        <li class="page-item">
+                            <a href="?page={{ bookmark_posts.previous_page_number }}" class="page-link" aria-label="Previous">
+                                <i class="fa fa-arrow-left"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% for i in bookmark_posts.paginator.page_range %}
+                            {% if bookmark_posts.number >= i|add:"-2" and bookmark_posts.number <= i|add:"2" %} 
+                                <li class="page-item {% ifequal bookmark_posts.number i %}active{% endifequal %}">
+                                    <a href="?page={{ i }}" class="page-link">{{i}}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                        {% if bookmark_posts.has_next %}
+                        <li class="page-item">
+                            <a href="?page={{ bookmark_posts.next_page_number }}" class="page-link" aria-label="Next">
+                                <i class="fa fa-arrow-right"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

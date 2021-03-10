@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_tags %}
+
+{% block meta_tags %}
+    <meta name="description" content="{% get_site_setting as site %}{{ site.Basic_SEO_Settings.Home_Page_Meta_Description }}">
+    <meta name="keywords" content="{% get_site_setting as site %}{{ site.Basic_SEO_Settings.Home_Page_Meta_Keyword }}">
+{% endblock %}
+
+{% block title_tag %}{% get_site_setting as site %}{{ site.Basic_Settings.Site_Name }}{% endblock %}
+
+{% block custom_css_and_links %}
+<link rel="canonical" href="http://127.0.0.1:8000/">
+{% endblock %}
+
+{% block breadcrum %}{% endblock %}
+
+{% block content %}
+<!-- Latest post section-->
+<section class="category-page">
+    <div class="container">
+        <div class="row">
+            <div class="area-heading cust_marging">
+                <h3>Recent Posts</h3>
+            </div>
+        </div>
+        <div class="row">
+            {% get_latest_posts as latest_posts %}
+            {% for rs in latest_posts %}
+                <div class="col-md-6 col-lg-4 latest_posts col-12">
+                    <div class="single-category">
+                        <div class="thumb">
+                            <img class="img-fluid" src="/media/{{ rs.feature_image }}" alt="{{rs.title}}">
+                        </div>
+                        <div class="short_details">
+                            <div class="meta-top d-flex">
+                                <a href="{{ rs.category.get_absolute_url }}">{{rs.category}}</a>/
+                                <a>{{ rs.create_at }}</a>
+                            </div>
+                            <a class="d-block" href="{% url 'single-blog' rs.category.slug rs.slug %}">
+                                <h4>{{ rs.title }}</h4>
+                            </a>
+                            <div class="meta-bottom d-flex">
+                                {% get_comments_count rs as comments_count %}
+                                {% get_count_in_KMB rs.bookmark.count as bookmark_count %}
+                                <a class="text-dark"><i class="fa fa-comment-o"></i>{{comments_count}}
+                                    {% to_int comments_count as comment_new_count %}
+                                    {% if comment_new_count > 1 %}
+                                        Comments
+                                    {% else %}
+                                        Comment
+                                    {% endif %}
+                                </a>
+                                <a class="text-dark"><i class="fa fa-bookmark-o"></i>{{bookmark_count}}
+                                    {% to_int rs.bookmark.count as bookmark_new_count %}
+                                    {% if bookmark_new_count > 1 %}
+                                        Bookmarks
+                                    {% else %}
+                                        Bookmark
+                                    {% endif %}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!--================ editors pick section =================-->
+
+<section class="first_block">
+    <div class="container">
+        <div class="row">
+            <div class="area-heading">
+                <h3>Editor's Pick</h3>
+            </div>
+        </div>
+        <div class="row">
+            {% for rs in editors_pick %}
+                <div class="col-lg-4 col-xl-4">
+                    <div class="single-blog style_five">
+                        <div class="thumb">
+                            <img class="img-fluid" src="/media/{{ rs.feature_image }}" alt="{{rs.title}}">
+                        </div>
+                        <div class="short_details editors_pick">
+                            <div class="meta-top d-flex">
+                                <a href="{{ rs.category.get_absolute_url }}"><kbd class="back-blue">{{ rs.category }}</kbd></a>
+                            </div>
+                            <a class="d-block" href="{% url 'single-blog' rs.category.slug rs.slug%}">
+                                <h4><kbd class="bg-white text-dark">{{ rs.title }}</kbd></h4>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

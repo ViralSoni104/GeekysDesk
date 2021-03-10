@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_tags %}
+
+{% block meta_tags %}
+    <meta name="description" content="{{category.meta_description}}">
+    <meta name="keywords" content="{{category.meta_keywords}}">
+{% endblock %}
+
+{% block title_tag %}
+    {{category.title}}
+{% endblock %}
+
+{% block custom_css_and_links %}
+<link rel="canonical" href="http://127.0.0.1:8000{{category.get_absolute_url}}">
+{% endblock %}
+
+{% block breadcrum %}
+<section class="banner_area">
+    <div class="banner_inner d-flex align-items-center">
+        <div class="container">
+            <div class="banner_content d-md-flex justify-content-between align-items-center">
+                <div class="mb-3 mb-md-0">
+                    <h2>{{category}}</h2>
+                </div>
+                <div class="page_link">
+                    <a href="{% url 'home' %}">Home</a>
+                    {% for rs in category.get_ancestors %}
+                        <a href="{{rs.get_absolute_url}}">{{rs.title|truncatechars:"8"}}</a>
+                    {% endfor %}
+                    <a href="{{category.get_absolute_url}}">{{category.title}}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block content %}
+<section class="blog_area mt-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mb-5 mb-lg-0">
+                <div class="blog_left_sidebar">
+                    {% if datas == 'Category' %}
+                        <div class="row">
+                            {% for rs in sub_categories %}
+                                <div class="col-lg-6 col-xl-6 mb-5">
+                                    <div class="single-blog style_five mb-3">
+                                        <div class="thumb">
+                                            <a href="{{rs.get_absolute_url}}"><img class="img-fluid" src="/media/{{rs.image}}" alt="{{rs.title}}"></a>
+                                        </div>
+                                    </div>
+                                    <div class="">
+                                        <a href="{{ rs.get_absolute_url }}" class="category-title"><h3 class="text-center">{{rs.title}}</h3></a>
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <h1>No Categories Found</h1>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {% for rs in post %}
+                            <article class="blog_item">
+                                <div class="blog_item_img">
+                                    <img class="card-img rounded-0" src="/media/{{rs.feature_image}}" alt="{{rs.title}}">
+                                    <a href="#" class="blog_item_date">
+                                        <h3>{{rs.create_at|date:"d"}}</h3>
+                                        <p class="text-white">{{rs.create_at|date:"M"}}</p>
+                                    </a>
+                                </div>
+                            
+                                <div class="blog_details">
+                                    <a class="d-inline-block" href="{% url 'single-blog' rs.category.slug rs.slug %}">
+                                        <h2>{{rs.title}}</h2>
+                                    </a>
+                                    <p>{{rs.short_description}}</p>
+                                    <ul class="blog-info-link">
+                                        {% get_count_in_KMB rs.bookmark.count as bookmark_count %}
+                                        <li><a href="{{ rs.category.get_absolute_url }}"><kbd class="back-blue">{{rs.category}}</kbd></a></li>
+                                        <li>
+                                            <a onclick="save_post('{{rs.id}}','.bookmark_{{rs.id}}','')">
+                                            {% if rs.id in bookmarked %}
+                                                <i class="bookmark_{{rs.id}} fa fa-bookmark mr-2"></i>
+                                            {% else %}
+                                                <i class="bookmark_{{rs.id}} fa fa-bookmark-o mr-2"></i>
+                                            {% endif %}
+                                            </a>
+                                            <span class='bookmark_{{rs.id}}_count'>{{bookmark_count}}</span>
+                                            {% to_int rs.bookmark.count as bookmark_new_count %}
+                                            {% if bookmark_new_count > 1 %}
+                                                Bookmarks
+                                            {% else %}
+                                                Bookmark
+                                            {% endif %}   
+                                        </li>
+                                    </ul>
+                                </div>
+                            </article>
+                        {% empty %}
+                            <div class="container d-flex justify-content-center mt-4">
+                                <i class="fa fa-3x fa-frown-o mr-3" aria-hidden="true"></i><h1 class="">Oops! No Post Found.</h1>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    
+                    <nav class="blog-pagination justify-content-center d-flex">
+                        <ul class="pagination">
+                            {% if datas == 'Category' %}
+                                {% if sub_categories.has_other_pages %}
+                                        {% if sub_categories.has_previous %}
+                                        <li class="page-item">
+                                            <a href="?page={{ sub_categories.previous_page_number }}" class="page-link" aria-label="Previous">
+                                                <i class="fa fa-arrow-left"></i>
+                                            </a>
+                                        </li>
+                                        {% endif %}
+                                        {% for i in sub_categories.paginator.page_range %}
+                                            {% if sub_categories.number >= i|add:"-2" and sub_categories.number <= i|add:"2" %}
+                                                <li class="page-item {% ifequal sub_categories.number i %}active{% endifequal %}">
+                                                    <a href="?page={{ i }}" class="page-link">{{i}}</a>
+                                                </li>
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if sub_categories.has_next %}
+                                            <li class="page-item">
+                                                <a href="?page={{ sub_categories.next_page_number }}" class="page-link" aria-label="Next">
+                                                    <i class="fa fa-arrow-right"></i>
+                                                </a>
+                                            </li>
+                                        {% endif %}
+                                {% endif %}
+                            {% else %}
+                                {% if post.has_other_pages %}
+                                    {% if post.has_previous %}
+                                        <li class="page-item">
+                                            <a href="?page={{ post.previous_page_number }}" class="page-link" aria-label="Previous">
+                                                <i class="fa fa-arrow-left"></i>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                    {% for i in post.paginator.page_range %}
+                                        {% if post.number >= i|add:"-2" and post.number <= i|add:"2" %}
+                                            <li class="page-item {% ifequal post.number i %}active{% endifequal %}">
+                                                <a href="?page={{ i }}" class="page-link">{{i}}</a>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if post.has_next %}
+                                        <li class="page-item">
+                                            <a href="?page={{ post.next_page_number }}" class="page-link" aria-label="Next">
+                                                <i class="fa fa-arrow-right"></i>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="blog_right_sidebar">
+                    <aside class="single_sidebar_widget post_category_widget">
+                        <h4 class="widget_title">Category</h4>
+                        <ul class="list cat-list">
+                            {% for category,count in side_category_with_post_count.items %}
+                                <li>
+                                    <a href="{{ category.get_absolute_url }}" class="d-flex">
+                                        <p>{{category.title}}</p>
+                                        <p>({{count}})</p>
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </aside>
+
+                    <aside class="single_sidebar_widget popular_post_widget">
+                        <h3 class="widget_title">Recent Post</h3>
+                        {% get_latest_posts as latest_posts %}
+                        {% for rs in latest_posts %}
+                        <div class="media post_item">
+                            <img src="/media/{{rs.feature_image}}" alt="{{rs.title}}" width="100">
+                            <div class="media-body">
+                                <a href="{% url 'single-blog' rs.category.slug rs.slug %}">
+                                    <h3>{{rs.title}}</h3>
+                                </a>
+                                <p>{{rs.create_at}}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </aside>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

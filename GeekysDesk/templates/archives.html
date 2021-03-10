@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_tags %}
+
+{% block meta_tags %}
+{% endblock %}
+
+{% block title_tag %}
+Archives - {% get_site_setting as site %}{{ site.Basic_Settings.Site_Name }}
+{% endblock %}
+
+{% block custom_css_and_links %}
+<link rel="canonical" href="http://127.0.0.1:8000/archives/{% if year_for_canonical %}{{year_for_canonical}}/{% endif %}">
+{% endblock %}
+
+{% block breadcrum %}
+<section class="banner_area">
+    <div class="banner_inner d-flex align-items-center">
+        <div class="container">
+            <div class="banner_content d-md-flex justify-content-between align-items-center">
+                <div class="mb-3 mb-md-0">
+                    <h2>Archives</h2>
+                </div>
+                <div class="page_link">
+                    <a href="{% url 'home' %}">Home</a>
+                    <a href="{% url 'archives' %}">Archives</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block content %}
+<section class="blog_area mt-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 mb-5 mb-lg-0">
+                <div class="blog_left_sidebar mt-5">
+                    <div class="row">
+                        {% if years %}
+                            {% for rs in years %}
+                            <div class="col-md-6 col-lg-4 mb-4">
+                                <div class="back-blue text-white p-4">
+                                    <div class="">
+                                        <a class="d-block" href="{% url 'archives-yearly' rs|first %}">
+                                            <h4 class="text-white">Jan-Dec {{rs|first}}</h4>
+                                        </a>
+                                        <div class="meta-bottom d-flex">
+                                            <a class="text-white"><i class="mr-2 fa fa-book"></i>Total {{rs|last}} Posts</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% empty %}
+                                <h1>No Archives Found</h1>
+                            {% endfor %}
+                        {% else %}
+                            {% if post_list %}
+                                {% for rs in post_list %}
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="single-category">
+                                        <div class="thumb">
+                                            <img class="img-fluid" src="/media/{{rs.feature_image}}" alt="{{rs.title}}">
+                                        </div>
+                                        <div class="short_details">
+                                            <a class="d-block" href="{% url 'single-blog' rs.category.slug rs.slug %}">
+                                                <h4>{{rs.title}}</h4>
+                                            </a>
+                                            <div class="meta-bottom d-flex">
+                                                {% get_comments_count rs as comments_count %}
+                                                {% get_count_in_KMB rs.bookmark.count as bookmark_count %}
+                                                <a class="text-dark"><i class="fa fa-comment-o"></i>{{comments_count}}
+                                                    {% to_int comments_count as comment_new_count %}
+                                                    {% if comment_new_count > 1 %}
+                                                        Comments
+                                                    {% else %}
+                                                        Comment
+                                                    {% endif %}
+                                                </a>
+                                                <a class="text-dark"><i class="fa fa-bookmark-o"></i>{{bookmark_count}}
+                                                    {% to_int rs.bookmark.count as bookmark_new_count %}
+                                                    {% if bookmark_new_count > 1 %}
+                                                        Bookmarks
+                                                    {% else %}
+                                                        Bookmark
+                                                    {% endif %}
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% empty %}
+                                    <h1>No Post Found</h1>
+                                {% endfor %}
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                    <div class="row container d-flex justify-content-center">
+                        <nav class="blog-pagination justify-content-center d-flex">
+                            <ul class="pagination">
+                                {% if years %}
+                                    {% if years.has_other_pages %}
+                                        {% if years.has_previous %}
+                                        <li class="page-item">
+                                            <a href="?page={{ years.previous_page_number }}" class="page-link" aria-label="Previous">
+                                                <i class="fa fa-arrow-left"></i>
+                                            </a>
+                                        </li>
+                                        {% endif %}
+                                        {% for i in years.paginator.page_range %}
+                                            {% if years.number >= i|add:"-2" and years.number <= i|add:"2" %} 
+                                            <li class="page-item {% ifequal years.number i %}active{% endifequal %}">
+                                                <a href="?page={{ i }}" class="page-link">{{i}}</a>
+                                            </li>
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if years.has_next %}
+                                        <li class="page-item">
+                                            <a href="?page={{ years.next_page_number }}" class="page-link" aria-label="Next">
+                                                <i class="fa fa-arrow-right"></i>
+                                            </a>
+                                        </li>
+                                        {% endif %}
+                                    {% endif %}    
+                                {% endif %}
+                                {% if post_list %}
+                                    {% if post_list.has_other_pages %}
+                                        {% if post_list.has_previous %}
+                                        <li class="page-item">
+                                            <a href="?page={{ post_list.previous_page_number }}" class="page-link" aria-label="Previous">
+                                                <i class="fa fa-arrow-left"></i>
+                                            </a>
+                                        </li>
+                                        {% endif %}
+                                        {% for i in post_list.paginator.page_range %}
+                                            {% if post_list.number >= i|add:"-2" and post_list.number <= i|add:"2" %} 
+                                            <li class="page-item {% ifequal post_list.number i %}active{% endifequal %}">
+                                                <a href="?page={{ i }}" class="page-link">{{i}}</a>
+                                            </li>
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if post_list.has_next %}
+                                        <li class="page-item">
+                                            <a href="?page={{ post_list.next_page_number }}" class="page-link" aria-label="Next">
+                                                <i class="fa fa-arrow-right"></i>
+                                            </a>
+                                        </li>
+                                        {% endif %}
+                                    {% endif %}    
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

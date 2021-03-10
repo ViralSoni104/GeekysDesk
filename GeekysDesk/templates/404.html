@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_tags %}
+
+{% block meta_tags %}{% endblock %}
+
+{% block title_tag %}404 - Page Not Found{% endblock %}
+
+{% block custom_css_and_links %}{% endblock %}
+
+{% block breadcrum %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row d-flex align-items-center mt-5">
+        <div class="col-md-7 col-12">
+            <img src="/media/img/404.png" class="w-100 img-fluid" alt='404 - Page Not Found'>
+        </div>
+        <div class="col-md-5 col-12 text-center mt-md-0 mt-5 text-md-left">
+            <h1>404 Page Not Found!</h1>
+            <a href="{% url 'home' %}" class="btn btn-info text-white"><i class="fa fa-angle-double-left mr-2"></i>Back to Home</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_tags %}
+
+{% block meta_tags %}
+    <meta name="description" content="{% get_site_setting as site %}{{ site.Basic_SEO_Settings.Contact_Page_Meta_Description }}">
+    <meta name="keywords" content="{% get_site_setting as site %}{{ site.Basic_SEO_Settings.Contact_Page_Meta_Keyword }}">
+{% endblock %}
+
+{% block title_tag %}Contact Us - {% get_site_setting as site %}{{ site.Basic_Settings.Site_Name }}{% endblock %}
+
+{% block custom_css_and_links %}
+<link rel="canonical" href="http://127.0.0.1:8000/contact-us/">
+{% endblock %}
+
+{% block breadcrum %}
+<section class="banner_area">
+    <div class="banner_inner d-flex align-items-center">
+        <div class="container">
+            <div class="banner_content d-md-flex justify-content-between align-items-center">
+                <div class="mb-3 mb-md-0">
+                    <h2>Contact Us</h2>
+                </div>
+                <div class="page_link">
+                    <a href="{% url 'home' %}">Home</a>
+                    <a href="{% url 'contact-us' %}">Contact Us</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block content %}
+<section class="contact-section mt-5 mt-md-5">
+    <div class="container">
+        <div class="d-sm-block mb-4 pb-4">
+            <p class="text-dark contact_text mt-5">Contact us via email or Social Media (Links and mail is availabel at bottom of page). We are highly social and interactive and would really love to hear
+                form you and your feedback is highly valuable to us.</p>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <h2 class="contact-title">Get in Touch</h2>
+            </div>
+            <div class="col-lg-12 col-12">
+                <form class="form-contact contact_form" action="{% url 'contact-us' %}" method="post" id="">
+                    {% csrf_token %}
+                    <div class="row">
+                        {% for field in form %}
+                            {% ifequal field.name 'contact_name' %}
+                            <div class="col-12">
+                                <div class="">
+                                    <input class="form-control" name="contact_name" id="id_contact_name" type="text"
+                                        placeholder="Enter your name">
+                                    <span class="error" id="contact_error"></span>
+                                </div>
+                            </div>
+                            {% endifequal %}
+                            {% ifequal field.name 'contact_email' %}
+                            <div class="col-12">
+                                <div class="mt-3">
+                                    <input class="form-control" name="contact_email" id="id_contact_email" type="email"
+                                        placeholder="Enter email address">
+                                    <span class="error" id="email_error"></span>
+                                </div>
+                            </div>
+                            {% endifequal %}
+                            {% ifequal field.name 'message' %}
+                            <div class="col-12">
+                                <div class="mt-3">
+                                    <textarea class="form-control w-100" name="message" id="id_message" cols="30" rows="9"
+                                        placeholder="Enter Message"></textarea>
+                                </div>
+                            </div>
+                            {% endifequal %}
+                            {% for error in field.errors %}
+                                <span class="error container" id="field_errors">{{ error }}</span><br />
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                    <div class="form-group mt-3">
+                        <button type="submit" class="button button-contactForm">Send Message</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    var toasted = new Toasted({
+        position: 'bottom-center',
+        theme: 'primary',
+        duration: 5000,
+        className: 'toastClass',
+        fullWidth: true,
+    })
+</script>
+    {% if messages %}
+        {% for message in messages %}
+        <script>
+            toasted.show("<span class='toast-content'><span class='fa fa-check-circle' style='color:#55efc4;font-size:0.6rem;'></span>&nbsp;&nbsp;{{message}}<span>")
+        </script>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

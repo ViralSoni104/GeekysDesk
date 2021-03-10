@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_tags %}
+
+{% block meta_tags %}{% endblock %}
+
+{% block title_tag %}Newsletter - Subscription{% endblock %}
+
+{% block custom_css_and_links %}
+
+{% endblock %}
+
+{% block breadcrum %}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="container">
+        <div class="row d-flex justify-content-center">
+            {% if messages %}
+                {% for message in messages %}
+                    {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                        <div class="col-12 d-flex justify-content-center mt-10">
+                            <img src="/media/img/email_verified.png" class="img-fluid mt-2" width="600">
+                        </div>
+                        <div class="col-12 d-flex justify-content-center mt-4">
+                            <span class="text-center mt-0 text-info msg_text">{{message}}</span>
+                        </div>
+                    {% endif %}
+                    {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                        <div class="col-12 d-flex justify-content-center mt-10">
+                            <img src="/media/img/error.png" class="img-fluid mt-2" width="500">
+                        </div>
+                        <div class="col-12 d-flex justify-content-center mt-2">
+                            <span class="text-center mt-4 text-danger msg_text">{{message}}</span>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            <a class="btn btn-info text-center text-white mt-5" href="{% url 'home' %}"><i class="fa fa-angle-double-left mr-2"></i>Back to Home</a>
+        </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_tags %}
+
+{% block meta_tags %}{% endblock %}
+
+{% block title_tag %}Login{% endblock %}
+
+{% block custom_css_and_links %}{% endblock %}
+
+{% block breadcrum %}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row container d-flex justify-content-center">
+            <a href="{% url 'social:begin' 'github' %}" class="btn btn-primary">Login with GitHub</a>
+        </div>
+        <br/>
+        <div class="row container d-flex justify-content-center">
+            <a href="{% url 'social:begin' 'facebook' %}" class="btn btn-info">Login With Facebook</a>
+        </div>
+        <br />
+        <div class="row container d-flex justify-content-center">
+            <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-danger">Login With Google</a>
+        </div>
+    </div>
+    
+{% endblock %}

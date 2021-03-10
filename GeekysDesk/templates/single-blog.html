@@ -1,0 +1,324 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_tags %}
+{% load humanize %}
+
+{% block meta_tags %}
+    <meta name="description" content="{{post.meta_description}}">
+    <meta name="keywords" content="{{post.meta_keywords}}">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="{{post.title}}" />
+    <meta property="og:description" content="{{post.short_description}}" />
+    <meta property="og:image" content="{{request.scheme}}://{{request.get_host}}/media/{{post.feature_image}}" />
+{% endblock %}
+
+{% block title_tag %}{{post.title}} - {{post.category}}{% endblock %}
+
+{% block custom_css_and_links %}{% endblock %}
+
+{% block breadcrum %}
+<section class="banner_area">
+    <div class="banner_inner d-flex align-items-center">
+        <div class="container">
+            <div class="banner_content d-md-flex justify-content-between align-items-center">
+                <div class="mb-3 mb-md-0">
+                    <h2>{{post.title}}</h2>
+                </div>
+                <div class="page_link">
+                    <a href="{% url 'home' %}">Home</a>
+                    {% for rs in post.category.get_ancestors %}
+                        <a href="{{rs.get_absolute_url}}">{{rs.title|truncatechars:"8"}}</a>
+                    {% endfor %}
+                    <a href="{{post.category.get_absolute_url}}">{{post.category}}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block content %}
+<section class="blog_area single-post-area area-padding">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 posts-list">
+                <div class="single-post">
+                    <div class="feature-img">
+                        <img class="img-fluid feature_image" src="/media/{{post.feature_image}}" alt="{{post.title}}">
+                    </div>
+
+                    <div class="blog_details">
+                        <h2>{{post.title}}</h2>
+                        <ul class="blog-info-link mt-3 mb-4 ">
+                            {% get_count_in_KMB post.bookmark.count as bookmark_count %}
+                            <li><a href="#"><kbd class="back-blue">{{post.category}}</kbd></a></li>
+                            <li><a><i class="fa fa-bookmark-o "></i>
+                                <span class="bookmark_{{post.id}}_count">{{bookmark_count}}</span>
+                                {% to_int post.bookmark.count as bookmark_new_count %}
+                                {% if bookmark_new_count > 1 %}
+                                    Bookmarks
+                                {% else %}
+                                    Bookmark
+                                {% endif %}
+                                </a>
+                            </li>
+                        </ul>
+                        
+                        <div class="w-100 content_blog">
+                            {{post.content|safe}}
+                        </div>
+                    </div>
+                </div>
+                <div class="navigation-top">
+                    <div class="">
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6 col-xs-6 col-12 d-flex justify-content-start">
+                                <span>Share on :&nbsp;&nbsp;</span>
+                                <ul class="social-icons share_post" >
+                                    <li>
+                                        <a href="https://facebook.com/sharer/sharer.php?u={{request.get_host}}{{request.get_full_path}}" target="_blank">
+                                            <i class="fa fa-facebook-official"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="https://twitter.com/intent/tweet/?text=Here I Found This Amazing Article On GeekysDesk {{post.title}}&url={{request.get_host}}{{request.get_full_path}}" target="_blank" rel="noopener nofollow noreferrer">
+                                            <i class="fa fa-twitter"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="mailto:?subject=Here I Found This Amazing Article On GeekysDesk&amp;body={{post.title}}.%20Here's the link of post {{request.get_host}}{{request.get_full_path}}" target="_self" rel="noopener">
+                                            <i class="fa fa-envelope"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="https://telegram.me/share/url?text=Here I Found This Amazing Article OnGeekysDesk {{post.title}}&amp;url={{request.get_host}}{{request.get_full_path}}" target="_blank" rel="noopener">
+                                            <i class="fa fa-telegram"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div id="save_post" class="save_post col-md-6 col-sm-6 col-xs-6 col-12 d-flex justify-content-md-end justify-content-sm-end justify-content-xs-end justify-content-start mt-sm-0 mt-xs-0 mt-20 mt-md-0">
+                                {% if bookmarked %}
+                                    <i class="bookmark_{{post.id}} fa fa-bookmark mr-2" onclick="save_post('{{post.id}}','.bookmark_{{post.id}}')"></i><strong class="saved_text text-blue">In Bookmarked</strong>
+                                {% else %}
+                                    <i class="bookmark_{{post.id}} fa fa-bookmark-o mr-2" onclick="save_post('{{post.id}}','.bookmark_{{post.id}}')"></i><strong  class="saved_text">Bookmark Post to read later</strong>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% if prev_post or next_post %}
+                        <div class="navigation-area">
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-12 nav-left flex-row d-flex justify-content-start align-items-center">
+                                    {% if prev_post %}
+                                        <div class="thumb">
+                                            <a href="{% url 'single-blog' prev_post.category.slug prev_post.slug %}">
+                                                <img class="img-fluid" src="/media/{{prev_post.feature_image}}" width="100" alt="">
+                                            </a>
+                                        </div>
+                                        <div class="arrow">
+                                            <a href="{% url 'single-blog' prev_post.category.slug prev_post.slug %}">
+                                                <span class="fa text-white fa-arrow-left"></span>
+                                            </a>
+                                        </div>
+                                        <div class="detials">
+                                            <p>Prev Post</p>
+                                            <a href="{% url 'single-blog' prev_post.category.slug prev_post.slug %}">
+                                                <h4>{{prev_post.title}}</h4>
+                                            </a>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                {% if next_post %}
+                                    <div class="col-lg-6 col-md-6 col-12 nav-right flex-row d-flex justify-content-end align-items-center">
+                                        <div class="detials">
+                                            <p>Next Post</p>
+                                            <a href="{% url 'single-blog' next_post.category.slug next_post.slug %}">
+                                                <h4>{{next_post.title}}</h4>
+                                            </a>
+                                        </div>
+                                        <div class="arrow">
+                                            <a href="{% url 'single-blog' next_post.category.slug next_post.slug %}">
+                                                <span class="fa text-white fa-arrow-right"></span>
+                                            </a>
+                                        </div>
+                                        <div class="thumb">
+                                            <a href="{% url 'single-blog' next_post.category.slug next_post.slug %}">
+                                                <img class="img-fluid" src="/media/{{next_post.feature_image}}" width="100" alt="">
+                                            </a>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+
+                
+
+                <div class="comment-form">
+                    {% if user.is_authenticated %}
+                        <h4>Leave a Comment</h4>
+                        <form class="form-contact" action="{% url 'postComment' post.slug %}" id="" method="POST">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <textarea class="w-100 form-control" name="comment" id="" cols="30" rows="4"
+                                            placeholder="Enter Comment Here.."></textarea>
+                                        <input type="hidden" name='parent' value="" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-info">Post Comment</button>
+                            </div>
+                        </form>
+                    {% else %}
+                        <p>Please Login into your account to leave a comment.</p>
+                    {% endif %}
+                </div>
+                <div class="comments-area">
+                    {% get_comment_plus_replies_total_count comments.count replies|length as total_comment_count %}
+                    <h4>({{total_comment_count}}) Comments</h4>
+                    {% for rs in comments %}
+                        {% get_user_profile_picture rs.user as user_profile %}
+                        <!--comment module-->
+                        <div class="row mt-10">
+                            <div class="col-md-2 col-xs-2 col-sm-2 col-3">
+                                {% if user_profile.picture %}
+                                    {% if user_profile.picture.data.url %}
+                                        <img src="{{user_profile.picture.data.url}}" alt="user-profile" class="rounded-circle img-fluid w-100" />
+                                    {% else %}
+                                        <img src="{{user_profile.picture}}" alt="user-profile" class="rounded-circle img-fluid w-100" />
+                                    {% endif %}
+                                {% else %}
+                                    <img src="/media/img/no-profile.png" class="rounded-circle img-fluid w-100" />
+                                {% endif %}
+                            </div>
+                            <div class="col-md-10 col-xs-10 col-sm-10 col-9">
+                                <h5 class="text-dark">{{rs.user.username}}</h5>
+                                <kbd class="back-blue">{{rs.timestamp|naturaltime}}</kbd>
+                                <div class="d-flex mt-4">
+                                    <p class="justify-content-start">
+                                        {{rs.comment_text}}
+                                    </p>
+                                </div>
+                                <div class="d-flex"><a data-toggle="collapse" href="#collapseExample{{rs.id}}" role="button" aria-expanded="false" aria-controls="collapseExample{{rs.id}}" class="btn-reply text-uppercase text-dark"><i class="mr-2 fa fa-reply"></i>Reply</a></div>
+                                {% for reply in replies|get_val:rs.id %}
+                                    {% get_user_profile_picture reply.user as user_profile %}
+                                    <div class="row mt-md-5 mt-5">
+                                        <div class="col-md-2 col-xs-2 col-sm-2 col-3">
+                                            {% if user_profile.picture %}
+                                                {% if user_profile.picture.data.url %}
+                                                    <img src="{{user_profile.picture.data.url}}" alt="user-profile" class="rounded-circle img-fluid w-100" />
+                                                {% else %}
+                                                    <img src="{{user_profile.picture}}" alt="user-profile" class="rounded-circle img-fluid w-100" />
+                                                {% endif %}
+                                            {% else %}
+                                                <img src="/media/img/no-profile.png" class="rounded-circle img-fluid w-100" />
+                                            {% endif %}
+                                            
+                                        </div>
+                                        <div class="col-md-10 col-xs-10 col-sm-10 col-9">
+                                            <h5 class="text-dark">{{reply.user.username}}</h5>
+                                            <kbd class="back-blue">{{reply.timestamp|naturaltime}}</kbd>
+                                            <div class="d-flex mt-2">
+                                                <p class="justify-content-start">
+                                                    {{reply.comment_text}}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="comment-list">
+                            <div class="collapse container mt-3" id="collapseExample{{rs.id}}">
+                                <div class="card card-body">
+                                    <div class="">
+                                        {% if user.is_authenticated %}
+                                        <h4>Leave a Reply</h4>
+                                        <form class="form-contact" action="{% url 'postComment' post.slug %}" id="" method="POST">
+                                            {% csrf_token %}
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <div class="form-group">
+                                                        <textarea class="form-control" name="comment" id="" cols="30" rows="4"
+                                                            placeholder="Enter your reply here.."></textarea>
+                                                        <input type="hidden" name='parent' value="{{rs.id}}" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <button type="submit" class="btn btn-info">Post Reply</button>
+                                            </div>
+                                        </form>
+                                        {% else %}
+                                            <p>Please Login into your account to leave a comment.</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                           
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="blog_right_sidebar">
+                    <aside class="single_sidebar_widget post_category_widget">
+                        <h4 class="widget_title">Category</h4>
+                        <ul class="list cat-list">
+                            {% for category,count in side_category_with_post_count.items %}
+                                <li>
+                                    <a href="{{ category.get_absolute_url }}" class="d-flex">
+                                        <p>{{category.title}}</p>
+                                        <p>({{count}})</p>
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </aside>
+
+                    <aside class="single_sidebar_widget popular_post_widget">
+                        <h3 class="widget_title">Recent Post</h3>
+                        {% get_latest_posts as latest_posts %}
+                        {% for rs in latest_posts %}
+                            <div class="media post_item">
+                                <img src="/media/{{rs.feature_image}}" alt="{{rs.title}}" width="100">
+                                <div class="media-body">
+                                    <a href="{% url 'single-blog' rs.category.slug rs.slug %}">
+                                        <h3>{{rs.title}}</h3>
+                                    </a>
+                                    <p>{{rs.create_at}}</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </aside>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    var toasted = new Toasted({
+            position: 'bottom-center',
+            theme: 'primary',
+            duration: 5000,
+            className: 'toastClass',
+            fullWidth: true,
+        })
+</script>
+    {% if messages %}
+        {% for message in messages %}
+            <script>
+                toasted.show("<span class='toast-content'><span class='fa fa-check-circle' style='color:#55efc4;font-size:18px;'></span>&nbsp;&nbsp;{{message}}<span>")
+            </script>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

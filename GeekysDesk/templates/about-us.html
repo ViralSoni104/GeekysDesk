@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_tags %}
+
+{% block meta_tags %}
+    <meta name="description" content="{% get_site_setting as site %}{{ site.Basic_SEO_Settings.About_Page_Meta_Description }}">
+    <meta name="keywords" content="{% get_site_setting as site %}{{ site.Basic_SEO_Settings.About_Page_Meta_Keyword }}">
+{% endblock %}
+
+{% block title_tag %}About Us - {% get_site_setting as site %}{{ site.Basic_Settings.Site_Name }}{% endblock %}
+
+{% block custom_css_and_links %}
+<link rel="canonical" href="http://127.0.0.1:8000/about-us/">
+{% endblock %}
+
+{% block breadcrum %}
+<section class="banner_area">
+    <div class="banner_inner d-flex align-items-center">
+        <div class="container">
+            <div class="banner_content d-md-flex justify-content-between align-items-center">
+                <div class="mb-3 mb-md-0">
+                    <h2>About Us</h2>
+                </div>
+                <div class="page_link">
+                    <a href="{% url 'home' %}">Home</a>
+                    <a href="{% url 'about-us' %}">About Us</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block content %}
+<div class="bg-white py-5">
+    <div class="container py-5">
+        <div class="row align-items-center mb-5">
+            <div class="col-lg-6 order-2 order-lg-1">
+                <h2 class="font-weight-light text-dark">About Us</h2>
+                <hr/>
+                <p class="font-italic text-muted mb-4">
+                    <strong>{% get_site_setting as site %}{{ site.Basic_Settings.Site_Name }}</strong> is a Tech-Educational Channel / Platform / Blog / Medium for anyone and everyone who wants to learn and
+                    keep themselves updated with the latest Information Technology & Computer Science trends & Information. We are dedicated
+                    in providing high quality educational and informational content for everyone!
+                </p>
+            </div>
+            <div class="col-lg-5 px-5 mx-auto order-1 order-lg-2"><img
+                    src="/media/img/our_mission.jpg"
+                    alt="About - {% get_site_setting as site %}{{ site.Basic_Settings.Site_Name }}"
+                    class="img-fluid mb-4 mb-lg-0"></div>
+        </div>
+        <div class="row align-items-center">
+            <div class="col-lg-5 px-5 mx-auto"><img
+                    src="/media/img/about_us.jpg"
+                    alt="About Founder of - {% get_site_setting as site %}{{ site.Basic_Settings.Site_Name }}"
+                    class="img-fluid mb-4 mb-lg-0"></div>
+            <div class="col-lg-6">
+                <h2 class="font-weight-light text-dark">About Founder</h2>
+                <hr/>
+                <p class="font-italic text-muted mb-4">
+                    My name is Viral Soni and I am the founder/CEO of <strong>{% get_site_setting as site %}{{ site.Basic_Settings.Site_Name }}</strong>. I have done bachelors in Information
+                    Technology(BSc.IT).
+                </p>
+                <p class="font-italic text-muted mb-4">
+                    I love Information Technology and Computer Science domain and teaching and sharing knowledge is something that makes me
+                    feel happy so that’s why I created <strong>{% get_site_setting as site %}{{ site.Basic_Settings.Site_Name }} - Blog</strong> so that I can share my knowledge with everyone!
+                </p>
+                <p class="font-italic text-muted mb-4">
+                    If you like the educational content that we create, do like share and subscribe 😉
+                </p>
+                <p class="font-italic text-muted mb-4">
+                    Viral Soni – <strong>Founder / CEO</strong>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="bg-light py-5">
+    <div class="container py-1">
+        <div class="row mb-4">
+            <div class="col-lg-12">
+                <h3 class="display-4 font-weight-light text-center text-dark">Our Youtube Channel</h3>
+            </div>
+        </div>
+
+        <div class="row d-flex justify-content-center">
+            <iframe style="width: 80%;"height="515" src="https://www.youtube.com/embed/kikMub_0GWg" frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen></iframe>
+        </div>
+        <div class="row social_about_us">
+            <div class="col-lg-12">
+                <h3 class="display-4 font-weight-light text-center text-dark d-flex justify-content-center">Social Media Links</h3>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row d-flex justify-content-center align-items-center social_about_us_icon">
+                {% get_site_setting as site %}
+                {% for rs in site.Socail_Media_Settings %}
+                <a href="{{rs.Social_Media_Link}}" 
+                    {% if forloop.last %} 
+                        class="genric-btn back-blue circle text-white mb-4 ml-md-1 last_about_us_icon" 
+                    {% else %} 
+                        class="genric-btn back-blue circle mr-2 mr-md-5 text-white mb-4" 
+                    {% endif %}>
+                    <i class="{{rs.Font_Awesome_Class_For_Icon}} mr-2"></i>{{rs.Social_Media_Name}}</a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
